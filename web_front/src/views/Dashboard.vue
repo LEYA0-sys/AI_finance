@@ -1,10 +1,10 @@
 <template>
-  <div class="flex h-screen bg-slate-50 font-sans text-slate-800">
+  <div class="dash-root flex h-screen font-sans bg-white text-slate-900">
     <!-- Sidebar -->
-    <aside class="w-68 bg-slate-900 text-white flex flex-col shadow-2xl relative z-10">
-      <div class="h-20 flex items-center justify-center px-6 border-b border-white/10 bg-black/20 backdrop-blur-sm">
-        <h1 class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400 tracking-tight">
-          AI投研终端 Pro
+    <aside class="w-68 bg-black text-white flex flex-col shadow-2xl relative z-10 border-r border-white/10">
+      <div class="h-20 flex items-center justify-center px-8 border-b border-white/10 bg-black/40 backdrop-blur-sm">
+        <h1 class="text-[11px] font-extrabold tracking-[0.28em] uppercase text-white/90">
+          Global Commodity AI Analyzer Pro
         </h1>
       </div>
       
@@ -17,104 +17,153 @@
           v-for="key in commodities"
           :key="key"
           @click="changeCommodity(key)"
-          :class="['w-full flex items-center px-4 py-3.5 rounded-xl transition-all duration-300 font-medium group', activeComm === key ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-900/50' : 'text-gray-800 hover:bg-white/5 hover:text-white']"
+          :class="['w-full flex items-center px-4 py-3.5 rounded-xl transition-all duration-300 font-medium group', activeComm === key ? 'bg-white/6 text-white border border-white/20 shadow-[0_18px_45px_rgba(0,0,0,0.55)]' : 'text-slate-300 hover:bg-white/5 hover:text-white']"
         >
-          <span class="w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-colors" :class="activeComm === key ? 'bg-white/20' : 'bg-white/5 group-hover:bg-white/10'">
+          <span
+            class="w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-colors"
+            :class="activeComm === key ? 'bg-white/20' : 'bg-white/5 group-hover:bg-white/10'"
+          >
             <span>{{ getCommodityByKey(key)?.icon || '📈' }}</span>
           </span>
           {{ getCommodityByKey(key)?.name || key }}
-          <span v-if="commodities.length > 1" @click.stop="removeCommodity(key)" class="ml-auto text-xs text-slate-400 hover:text-red-400 cursor-pointer px-2">✕</span>
+          <span
+            v-if="commodities.length > 1"
+            @click.stop="removeCommodity(key)"
+            class="ml-auto text-xs text-slate-400 hover:text-red-400 cursor-pointer px-2"
+          >
+            ✕
+          </span>
         </button>
-        <button @click="showAddDialog = true" class="w-full flex items-center px-4 py-3.5 rounded-xl text-slate-400 hover:text-indigo-400 hover:bg-white/10 transition-all mt-2">
-          <span class="w-8 h-8 rounded-lg flex items-center justify-center mr-3 bg-white/5">＋</span> 添加品种
+        <button
+          @click="showAddDialog = true"
+          class="w-full flex items-center px-4 py-3.5 rounded-xl text-slate-400 hover:text-indigo-400 hover:bg-white/10 transition-all mt-2"
+        >
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center mr-3 bg-white/5">＋</span>
+          添加品种
         </button>
       </nav>
-            <!-- 添加品种弹窗 -->
-            <div v-if="showAddDialog" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-              <div class="bg-white rounded-xl shadow-xl p-8 w-80">
-                <h2 class="text-lg font-bold mb-4 text-slate-800">添加自选品种</h2>
-                <select
-                  v-model="addKey"
-                  class="w-full mb-4 p-2 border rounded bg-white text-slate-800"
-                >
-                  <option value="" disabled>请选择品种</option>
-                  <option v-for="(item, idx) in allCommodityList || []" :key="idx" :value="item?.key" :disabled="commodities.includes(item?.key)">
-                    {{ item?.name }}
-                  </option>
-                </select>
-                <div class="flex justify-end space-x-2">
-                  <button @click="showAddDialog = false" class="px-4 py-2 rounded bg-slate-200 text-slate-600 hover:bg-slate-300">取消</button>
-                  <button @click="addCommodity" :disabled="!addKey || commodities.includes(addKey)" class="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50">添加</button>
-                </div>
-              </div>
-            </div>
-      
-      <div class="p-4 border-t border-white/10 bg-black/10">
-        <div class="flex items-center mb-4 px-2">
-          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 mr-3 shadow-inner border border-white/20"></div>
-          <div>
-            <div class="text-sm font-bold text-slate-200">当前用户</div>
-            <div class="text-xs text-emerald-400 flex items-center">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>在线
-            </div>
+
+      <!-- 添加品种弹窗 -->
+      <div v-if="showAddDialog" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div class="bg-white rounded-xl shadow-xl p-8 w-80">
+          <h2 class="text-lg font-bold mb-4 text-slate-800">添加自选品种</h2>
+          <select
+            v-model="addKey"
+            class="w-full mb-4 p-2 border rounded bg-white text-slate-800"
+          >
+            <option value="" disabled>请选择品种</option>
+            <option
+              v-for="(item, idx) in allCommodityList || []"
+              :key="idx"
+              :value="item?.key"
+              :disabled="commodities.includes(item?.key)"
+            >
+              {{ item?.name }}
+            </option>
+          </select>
+          <div class="flex justify-end space-x-2">
+            <button
+              @click="showAddDialog = false"
+              class="px-4 py-2 rounded bg-slate-200 text-slate-600 hover:bg-slate-300"
+            >
+              取消
+            </button>
+            <button
+              @click="addCommodity"
+              :disabled="!addKey || commodities.includes(addKey)"
+              class="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50"
+            >
+              添加
+            </button>
           </div>
         </div>
-        <button @click="logout" class="w-full flex justify-center items-center px-4 py-2.5 rounded-lg text-sm text-slate-300 hover:text-white hover:bg-red-500/20 hover:border-red-500/30 border border-transparent transition-all">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-          安全退出
-        </button>
       </div>
+      
+      
     </aside>
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col overflow-hidden relative">
       <!-- Header -->
-      <header class="h-20 bg-white/80 backdrop-blur-md shadow-sm border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-20">
+      <header class="h-20 bg-white/92 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-10 sticky top-0 z-20">
         <div class="flex items-center">
-          <h2 class="text-2xl font-bold text-slate-800 tracking-tight">{{ getCommodityByKey(activeComm)?.name || activeComm }} <span class="font-normal text-slate-400 ml-2">深度行情分析</span></h2>
+          <h2 class="text-xl font-bold tracking-tight text-slate-900">
+            {{ getCommodityByKey(activeComm)?.name || activeComm }}
+            <span class="font-normal text-slate-400 ml-3 text-sm uppercase tracking-[0.25em]">Market Intelligence</span>
+          </h2>
         </div>
-        <div class="flex items-center space-x-4">
-          <div class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-semibold border border-indigo-100 flex items-center shadow-sm">
-            <svg class="w-4 h-4 mr-1.5 text-indigo-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path></svg>
-            DeepSeek 引擎就绪
+        <div class="flex items-center space-x-4 relative">
+          <div class="px-3 py-1.5 rounded-full text-xs font-semibold border border-slate-900/10 flex items-center bg-black text-white tracking-[0.16em] uppercase">
+            <svg class="w-3.5 h-3.5 mr-1.5 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"></path></svg>
+            DeepSeek Engine
           </div>
-          <button @click="fetchData" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-lg transition-colors" title="刷新数据">
+          <button
+            @click="fetchData"
+            class="p-2 text-slate-400 hover:text-black hover:bg-slate-100 rounded-md transition-colors"
+            title="刷新数据"
+          >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
           </button>
+          <!-- 用户按钮 -->
+          <div class="relative">
+            <button
+              @click="userMenuOpen = !userMenuOpen"
+              class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-white text-xs text-slate-700 hover:bg-black hover:text-white transition-colors"
+            >
+              <span class="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center text-[11px] font-semibold">
+                U
+              </span>
+              <span class="hidden sm:inline">用户</span>
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            <div
+              v-if="userMenuOpen"
+              class="absolute right-0 mt-2 w-32 bg-white border border-slate-200 rounded-md shadow-md text-xs text-slate-800 py-1 z-30"
+            >
+              <button
+                @click="logout"
+                class="w-full text-left px-3 py-2 hover:bg-black hover:text-white transition-colors"
+              >
+                安全退出
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
       <!-- Dashboard Body -->
-      <div class="flex-1 overflow-auto p-8 section-scroll">
+      <div class="flex-1 overflow-auto p-8 section-scroll bg-white">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <!-- Chart Card -->
-          <div class="lg:col-span-2 bg-white p-1 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden group hover:shadow-md transition-shadow">
-            <div class="px-6 py-5 border-b border-slate-100 flex flex-col gap-2 bg-slate-50/50">
+          <div class="lg:col-span-2 bg-white p-1 rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden group hover:shadow-lg hover:border-slate-300 transition-all">
+            <div class="px-6 py-5 border-b border-slate-100 flex flex-col gap-2 bg-white">
               <div class="flex justify-between items-center">
-                <h3 class="text-lg font-bold text-slate-800 flex items-center">
-                  <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
-                  专业K线图及均线系统
+                <h3 class="text-sm font-semibold text-slate-900 tracking-[0.18em] uppercase flex items-center">
+                  <span class="inline-block w-1.5 h-1.5 rounded-full bg-black mr-3"></span>
+                  Price Action & MA System
                 </h3>
                 <!-- 周期切换按钮 -->
-                <div class="flex space-x-2">
+                <div class="flex space-x-2 text-[11px]">
                   <button v-for="p in ['day','week','month']" :key="p" @click="changePeriod(p)"
-                    :class="['px-3 py-1 rounded font-bold text-xs border transition', period===p ? 'bg-indigo-600 text-white border-indigo-700' : 'bg-white text-slate-600 border-slate-200 hover:bg-indigo-50']">
+                    :class="['px-3 py-1 rounded-full font-semibold border transition', period===p ? 'bg-black text-white border-black' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-900 hover:text-white']">
                     {{ p==='day'?'日K':p==='week'?'周K':'月K' }}
                   </button>
                 </div>
               </div>
               <div class="flex flex-wrap items-center space-x-3 text-xs font-medium">
-                <span class="flex items-center text-blue-500"><span class="w-2 h-2 rounded-full bg-blue-500 mr-1.5"></span>MA5</span>
-                <span class="flex items-center text-amber-500"><span class="w-2 h-2 rounded-full bg-amber-500 mr-1.5"></span>MA10</span>
-                <span class="flex items-center text-purple-500"><span class="w-2 h-2 rounded-full bg-purple-500 mr-1.5"></span>MA20</span>
+                <span class="flex items-center text-slate-700"><span class="w-2 h-2 rounded-full bg-slate-900 mr-1.5"></span>MA5</span>
+                <span class="flex items-center text-slate-500"><span class="w-2 h-2 rounded-full bg-slate-500 mr-1.5"></span>MA10</span>
+                <span class="flex items-center text-slate-400"><span class="w-2 h-2 rounded-full bg-slate-300 mr-1.5"></span>MA20</span>
                 <!-- 预留多指标/对比入口 -->
-                <span class="ml-4 text-slate-500">指标：</span>
+                <span class="ml-4 text-slate-500 uppercase text-[10px] tracking-[0.18em]">Indicators</span>
                 <label class="inline-flex items-center space-x-1 cursor-pointer">
                   <input type="checkbox" v-model="showBoll" class="rounded border-slate-300" />
                   <span class="text-[11px] text-slate-600">BOLL 布林带</span>
                 </label>
-                <span class="ml-4 text-slate-500">对比：</span>
-                <select v-model="compareKey" @change="onCompareChange" class="border border-slate-300 rounded px-1 py-0.5 text-[11px] text-slate-700 bg-white">
+                <span class="ml-4 text-slate-500 uppercase text-[10px] tracking-[0.18em]">Compare</span>
+                <select v-model="compareKey" @change="onCompareChange" class="border border-slate-300 rounded-full px-2 py-0.5 text-[11px] text-slate-700 bg-white">
                   <option value="">无</option>
                   <option v-for="(item, idx) in allCommodityList || []" :key="idx" :value="item?.key" v-if="item?.key !== activeComm">
                     {{ item?.name }}
@@ -131,11 +180,11 @@
           </div>
 
           <!-- News Card -->
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
-            <div class="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
-              <h3 class="text-lg font-bold text-slate-800 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H14"></path></svg>
-                全球宏观异动监控
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all">
+            <div class="px-6 py-5 border-b border-slate-100 bg-white">
+              <h3 class="text-sm font-semibold text-slate-900 tracking-[0.18em] uppercase flex items-center">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-black mr-3"></span>
+                Macro Signals
               </h3>
             </div>
             <div class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
@@ -151,11 +200,11 @@
                 暂无最新情报
               </div>
               
-              <div v-for="(item, idx) in news" :key="idx" class="p-3.5 rounded-xl border border-slate-100 bg-slate-50 hover:bg-indigo-50/50 hover:border-indigo-100 transition-colors group">
-                <p class="text-sm text-slate-800 font-bold leading-relaxed mb-2 group-hover:text-indigo-900">{{ item.title }}</p>
+              <div v-for="(item, idx) in news" :key="idx" class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-colors group">
+                <p class="text-sm text-slate-900 font-semibold leading-relaxed mb-2 group-hover:text-white">{{ item.title }}</p>
                 <div class="flex justify-between items-center mt-2">
-                  <span class="text-xs font-semibold px-2 py-1 rounded bg-slate-200 text-slate-600 border border-slate-300">{{ item.source }}</span>
-                  <span class="text-xs text-slate-400 flex items-center">
+                  <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-white/80 text-slate-700 border border-slate-300 uppercase tracking-[0.16em]">{{ item.source }}</span>
+                  <span class="text-[11px] text-slate-400 flex items-center">
                     <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     实时
                   </span>
@@ -166,8 +215,8 @@
         </div>
 
         <!-- AI Report Card -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow flex flex-col relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-lg hover:border-slate-300 transition-all flex flex-col relative overflow-hidden">
+          <div class="absolute top-0 left-0 w-full h-px bg-slate-900/80"></div>
           <div class="px-8 py-6 border-b border-slate-100 flex flex-col gap-4 bg-slate-50/50">
             <div class="flex justify-between items-center">
               <div>
@@ -188,7 +237,7 @@
             <!-- 人物/风格选择 -->
             <div class="flex flex-wrap items-center gap-4 ml-9 text-xs text-slate-600">
               <div class="flex items-center gap-2">
-                <span class="font-semibold text-slate-500">分析风格：</span>
+                <span class="font-semibold text-slate-600 text-xs uppercase tracking-[0.18em]">Persona</span>
                 <select v-model="personaKey" class="border border-slate-300 rounded px-2 py-1 text-xs bg-white text-slate-700">
                   <option value="default">机构首席策略分析师（中性稳健）</option>
                   <option value="buffett">价值投资型股神（长期、重安全边际）</option>
@@ -204,7 +253,7 @@
               </div>
 
               <div class="flex items-center gap-2">
-                <span class="font-semibold text-slate-500">生成模式：</span>
+                <span class="font-semibold text-slate-600 text-xs uppercase tracking-[0.18em]">Mode</span>
                 <div class="inline-flex rounded-full bg-slate-100 p-0.5 border border-slate-200">
                   <button
                     type="button"
@@ -212,8 +261,8 @@
                     :class="[
                       'px-3 py-1 text-[11px] rounded-full font-semibold transition-colors',
                       reportMode === 'fast'
-                        ? 'bg-emerald-500 text-white shadow-sm'
-                        : 'text-slate-600 hover:text-emerald-600'
+                        ? 'bg-black text-white shadow-sm'
+                        : 'text-slate-600 hover:text-black'
                     ]"
                   >
                     ⚡ 快速
@@ -224,8 +273,8 @@
                     :class="[
                       'px-3 py-1 text-[11px] rounded-full font-semibold transition-colors',
                       reportMode === 'detailed'
-                        ? 'bg-indigo-600 text-white shadow-sm'
-                        : 'text-slate-600 hover:text-indigo-600'
+                        ? 'bg-slate-900 text-white shadow-sm'
+                        : 'text-slate-600 hover:text-black'
                     ]"
                   >
                     📑 详尽
@@ -249,7 +298,7 @@
             </div>
             
             <!-- Report Content -->
-            <div v-else-if="reportHtml" class="prose prose-slate prose-indigo max-w-none w-full markdown-body bg-slate-50/50 p-8 rounded-xl border border-slate-100 shadow-inner" v-html="reportHtml"></div>
+            <div v-else-if="reportHtml" class="prose prose-slate max-w-none w-full markdown-body bg-slate-50/80 p-8 rounded-xl border border-slate-200" v-html="reportHtml"></div>
             
             <!-- Empty State -->
             <div v-else class="h-full flex flex-col items-center justify-center text-slate-400 py-12">
@@ -265,10 +314,10 @@
         <!-- 历史研报 / AI 对话 / 智能预警 -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
           <!-- 历史研报 -->
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
-            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between">
-              <h3 class="text-sm font-bold text-slate-800 flex items-center">
-                <span class="mr-2">📚</span> 历史策略研报
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all">
+            <div class="px-6 py-4 border-b border-slate-100 bg-white flex items-center justify-between">
+              <h3 class="text-sm font-semibold text-slate-900 tracking-[0.18em] uppercase flex items-center">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-black mr-3"></span> Report Archive
               </h3>
               <span class="text-xs text-slate-400">最近 5 条</span>
             </div>
@@ -283,7 +332,7 @@
                 v-else
                 v-for="item in reportHistory"
                 :key="item.id"
-                class="p-3 rounded-xl border border-slate-100 bg-slate-50 hover:bg-indigo-50/60 transition-colors cursor-pointer"
+                class="p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-900 hover:text-white transition-colors cursor-pointer"
                 @click="openHistoryReport(item)"
               >
                 <div class="flex justify-between items-center mb-1">
@@ -295,19 +344,19 @@
                 </p>
                 <div class="flex justify-between items-center mt-1 text-[11px]">
                   <button
-                    class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    class="px-2 py-0.5 rounded-full border border-slate-300 bg-white/80 text-[11px] text-slate-700 hover:bg-slate-900 hover:text-white"
                     type="button"
                   >
-                    查看完整研报
+                    VIEW FULL
                   </button>
                   <button
                     type="button"
-                    class="px-2 py-0.5 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 flex items-center gap-1"
+                    class="px-2 py-0.5 rounded-full border border-slate-300 bg-white/80 text-[11px] text-slate-700 hover:bg-slate-900 hover:text-white flex items-center gap-1"
                     @click.stop="sendHistoryReportEmail(item)"
                     :disabled="historyEmailSendingId === item.id"
                   >
                     <span v-if="historyEmailSendingId === item.id" class="w-3 h-3 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></span>
-                    <span v-else>发送到邮箱</span>
+                    <span v-else>EMAIL</span>
                   </button>
                 </div>
               </div>
@@ -315,10 +364,10 @@
           </div>
 
           <!-- AI 对话 -->
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
-            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between">
-              <h3 class="text-sm font-bold text-slate-800 flex items-center">
-                <span class="mr-2">💬</span> AI 投研问答
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all">
+            <div class="px-6 py-4 border-b border-slate-100 bg-white flex items-center justify-between">
+              <h3 class="text-sm font-semibold text-slate-900 tracking-[0.18em] uppercase flex items-center">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-black mr-3"></span> AI Dialogue
               </h3>
               <span class="text-xs text-slate-400">围绕当前标的追问细节</span>
             </div>
@@ -327,53 +376,68 @@
                 <div v-if="!chatMessages.length" class="h-full flex items-center justify-center text-slate-400 text-xs">
                   你可以就研报中的观点继续追问，例如“仓位怎么分层建？”
                 </div>
-                <div v-else v-for="(m, idx) in chatMessages" :key="idx" class="flex mb-1" :class="m.role === 'user' ? 'justify-end' : 'justify-start'">
-                  <div :class="[
-                    'px-3 py-2 rounded-2xl max-w-[80%] text-xs leading-relaxed',
-                    m.role === 'user'
-                      ? 'bg-indigo-600 text-white rounded-br-sm'
-                      : 'bg-slate-100 text-slate-800 rounded-bl-sm'
-                  ]">
+                <div
+                  v-else
+                  v-for="(m, idx) in chatMessages"
+                  :key="idx"
+                  class="flex mb-1"
+                  :class="m.role === 'user' ? 'justify-end' : 'justify-start'"
+                >
+                  <div
+                    :class="[
+                      'px-3 py-2 max-w-[80%] text-xs leading-relaxed',
+                      m.role === 'user'
+                        ? 'bg-black text-white rounded-md'
+                        : 'bg-slate-100 text-slate-900 rounded-md border-l-2 border-black pl-3'
+                    ]"
+                  >
                     {{ m.content }}
                   </div>
                 </div>
+                <div v-if="chatLoading" class="mt-2 text-[11px] text-slate-400 flex items-center gap-1">
+                  <span class="inline-block w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse"></span>
+                  <span>AI 正在思考...</span>
+                </div>
               </div>
               <div class="p-3 border-t border-slate-100 bg-slate-50/80 flex items-center gap-2">
-                <input
-                  v-model="chatInput"
-                  @keyup.enter.exact.prevent="sendChat"
-                  type="text"
-                  placeholder="就当前标的继续提问，例如：现在适合分批加仓吗？"
-                  class="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                />
+                <div class="flex-1 flex flex-col group">
+                  <input
+                    v-model="chatInput"
+                    @keyup.enter.exact.prevent="sendChat"
+                    type="text"
+                    placeholder="就当前标的继续提问，例如：现在适合分批加仓吗？"
+                    class="px-3 py-2 text-xs rounded-md border border-slate-300 bg-white focus:outline-none focus:border-slate-900 transition-colors"
+                  />
+                  <div class="h-px w-full bg-transparent group-focus-within:bg-black transition-colors duration-200"></div>
+                </div>
                 <button
                   @click="sendChat"
                   :disabled="chatLoading || !chatInput.trim()"
-                  class="px-3 py-2 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 flex items-center gap-1"
+                  class="w-9 h-9 flex items-center justify-center rounded-md text-xs font-semibold text-white bg-black hover:bg-white hover:text-black hover:border hover:border-black disabled:opacity-60 transition-colors"
                 >
                   <span v-if="chatLoading" class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                  <span v-else>发送</span>
+                  <span v-else class="text-[13px] leading-none">➤</span>
                 </button>
               </div>
             </div>
           </div>
 
           <!-- 智能预警 -->
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
-            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between">
-              <h3 class="text-sm font-bold text-slate-800 flex items-center">
-                <span class="mr-2">⚠️</span> 智能技术面预警
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all">
+            <div class="px-6 py-4 border-b border-slate-100 bg-white flex items-center justify-between">
+              <h3 class="text-sm font-semibold text-slate-900 tracking-[0.18em] uppercase flex items-center">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-black mr-3"></span> Alerts
               </h3>
               <div class="flex items-center gap-3">
                 <button
                   @click="fetchAlerts"
-                  class="text-[11px] text-indigo-600 hover:text-indigo-700 flex items-center"
+                  class="text-[11px] text-slate-700 hover:text-black flex items-center"
                 >
                   刷新
                 </button>
                 <button
                   @click="sendAlertEmail"
-                  class="text-[11px] text-rose-600 hover:text-rose-700 flex items-center border border-rose-200 rounded-full px-2 py-0.5 bg-rose-50/60"
+                  class="text-[11px] text-slate-800 hover:text-white flex items-center border border-slate-300 rounded-full px-2 py-0.5 bg-white hover:bg-slate-900"
                 >
                   邮件发送本次预警
                 </button>
@@ -391,7 +455,7 @@
                 v-for="(a, idx) in alerts"
                 :key="idx"
                 class="p-3 rounded-xl border text-xs"
-                :class="a.level === 'warning' ? 'border-amber-200 bg-amber-50 text-amber-900' : 'border-emerald-200 bg-emerald-50 text-emerald-900'"
+                :class="a.level === 'warning' ? 'border-slate-300 bg-slate-50 text-slate-900' : 'border-slate-200 bg-white text-slate-900'"
               >
                 <div class="flex justify-between items-center mb-1">
                   <span class="font-semibold">{{ a.key?.toUpperCase() }}</span>
@@ -411,14 +475,14 @@
 
         <!-- 量化预测与置信度仪表盘 -->
         <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow lg:col-span-1">
-            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between">
-              <h3 class="text-sm font-bold text-slate-800 flex items-center">
-                <span class="mr-2">📈</span> 短期量化预测
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all lg:col-span-1">
+            <div class="px-6 py-4 border-b border-slate-100 bg-white flex items-center justify-between">
+              <h3 class="text-sm font-semibold text-slate-900 tracking-[0.18em] uppercase flex items-center">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-black mr-3"></span> Short-Term Model
               </h3>
               <button
                 @click="fetchPrediction"
-                class="text-[11px] text-indigo-600 hover:text-indigo-700 flex items-center border border-indigo-200 rounded-full px-2 py-0.5 bg-indigo-50/60"
+                class="text-[11px] text-slate-800 hover:text-white flex items-center border border-slate-300 rounded-full px-2 py-0.5 bg-white hover:bg-slate-900"
               >
                 生成预测
               </button>
@@ -440,7 +504,7 @@
                   </div>
                   <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
                     <div
-                      class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-indigo-500"
+                      class="h-full rounded-full bg-slate-900"
                       :style="{ width: Math.round((predictData.short_term.confidence || 0) * 100) + '%' }"
                     ></div>
                   </div>
@@ -481,9 +545,9 @@
 
                   <div class="grid grid-cols-2 gap-3 text-[11px] text-slate-600">
                     <!-- 技术规则视角 -->
-                    <div class="border border-indigo-100 rounded-lg bg-white/80 p-2">
+                    <div class="border border-slate-200 rounded-lg bg-white/80 p-2">
                       <div class="flex items-center justify-between mb-1">
-                        <span class="font-semibold text-indigo-700">技术规则视角</span>
+                        <span class="font-semibold text-slate-900">技术规则视角</span>
                         <span class="text-[10px] text-slate-400">权重 60%</span>
                       </div>
                       <div>
@@ -510,9 +574,9 @@
                     </div>
 
                     <!-- ARIMA 计量视角 -->
-                    <div class="border border-emerald-100 rounded-lg bg-white/80 p-2">
+                    <div class="border border-slate-200 rounded-lg bg-white/80 p-2">
                       <div class="flex items-center justify-between mb-1">
-                        <span class="font-semibold text-emerald-700">ARIMA 计量视角</span>
+                        <span class="font-semibold text-slate-900">ARIMA 计量视角</span>
                         <span class="text-[10px] text-slate-400">权重 40%</span>
                       </div>
                       <div v-if="predictData.short_term.models.arima">
@@ -548,10 +612,10 @@
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-md transition-shadow lg:col-span-2">
-            <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between">
-              <h3 class="text-sm font-bold text-slate-800 flex items-center">
-                <span class="mr-2">⚡</span> 超短期波动评估（5–30 分钟）
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all lg:col-span-2">
+            <div class="px-6 py-4 border-b border-slate-100 bg-white flex items-center justify-between">
+              <h3 class="text-sm font-semibold text-slate-900 tracking-[0.18em] uppercase flex items-center">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-black mr-3"></span> Ultra-Short Volatility
               </h3>
             </div>
             <div class="p-5 text-xs text-slate-700">
@@ -569,7 +633,7 @@
                   <div class="text-[11px] text-slate-500 mb-1">置信度</div>
                   <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
                     <div
-                      class="h-full rounded-full bg-gradient-to-r from-amber-400 to-rose-500"
+                      class="h-full rounded-full bg-slate-900"
                       :style="{ width: Math.round((predictData.ultra_short_term.confidence || 0) * 100) + '%' }"
                     ></div>
                   </div>
@@ -610,7 +674,7 @@
       <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
         <div class="flex flex-col">
           <div class="text-sm font-bold text-slate-800 flex items-center gap-2">
-            <span class="text-indigo-500">📘 历史策略研报</span>
+            <span class="text-slate-900">📘 历史策略研报</span>
             <span class="text-slate-500 text-xs">{{ selectedHistoryReport.commodity }}</span>
           </div>
           <div class="text-[11px] text-slate-400 mt-0.5">
@@ -620,7 +684,7 @@
         <div class="flex items-center gap-3">
           <button
             type="button"
-            class="px-3 py-1.5 rounded-full border border-emerald-200 bg-emerald-50 text-emerald-700 text-[11px] flex items-center gap-1"
+            class="px-3 py-1.5 rounded-full border border-slate-300 bg-white text-[11px] text-slate-700 hover:bg-slate-900 hover:text-white flex items-center gap-1"
             @click="sendHistoryReportEmail(selectedHistoryReport)"
             :disabled="historyEmailSendingId === selectedHistoryReport.id"
           >
@@ -641,7 +705,7 @@
       </div>
       <div class="flex-1 overflow-auto p-6 bg-slate-50/60">
         <div
-          class="prose prose-slate prose-indigo max-w-none w-full markdown-body bg-white p-6 rounded-xl border border-slate-100 shadow-inner"
+          class="prose prose-slate max-w-none w-full markdown-body bg-white p-6 rounded-xl border border-slate-200"
           v-html="historyDetailHtml"
         ></div>
       </div>
@@ -737,6 +801,9 @@ const alertsLoading = ref(false)
 // 量化预测
 const predictData = ref(null)
 const predictLoading = ref(false)
+
+// 顶部用户菜单
+const userMenuOpen = ref(false)
 
 
 const showAddDialog = ref(false)
